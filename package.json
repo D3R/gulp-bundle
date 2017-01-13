@@ -1,0 +1,15 @@
+{
+  "name": "gulp-d3r-bundle",
+  "version": "0.1.0",
+  "description": "Moves assets into the web directory based on a config file",
+  "repository": "https://github.com/d3r/gulp-bundle.git",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "gulp-util": "^3.0.8",
+    "mkdirp": "^0.5.1",
+    "through2": "^2.0.3"
+  }
+}
