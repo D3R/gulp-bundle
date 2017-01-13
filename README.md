@@ -17,7 +17,9 @@ The rest of the set up involves a key pair set up.
 
 This plugin provides some very basic concatination. If your key is a single file and you provide an array of files it concatinates them together into the specified key.
 
-### Example bundle config:
+## Examples
+
+### Bundle config:
 
 ```json
 {
@@ -31,7 +33,7 @@ This plugin provides some very basic concatination. If your key is a single file
 }
 ```
 
-### Example gulp task set up:
+### Gulp task set up:
 
 ```javascript
 gulp.task('bundle', function() {
