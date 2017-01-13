@@ -47,7 +47,7 @@ This plugin provides some very basic concatenation. If your key is a single file
 gulp.task('bundle', function() {
     return gulp.src([
             'resources/bundles/*.bundle.json',
-            'vendor/*/*/*.bundle.js'
+            'vendor/d3r/*/*.bundle.json'
         ])
         .pipe(bundle())
         .pipe(notify("Bundle complete: <%=file.relative%>"))
