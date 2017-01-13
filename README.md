@@ -10,8 +10,8 @@ There should always be the 3 keys javascript, css, and assets. These have been k
 
 The rest of the set up involves a key pair set up.
 
-- Key: This is the destination for the file or files. If this is a directory files will be just copied into the directory. If you specify a file then files will be written to that exact file. When used in single file mode each entry represents a single file/
-- Value: This takes a file reference a glob or an array of files/globs. This is where you select the source files. Paths starting in / are relative to the project directory and relative directories are relative to the config file.
+- __Key__: This is the destination for the file or files. If this is a directory files will be just copied into the directory. If you specify a file then files will be written to that exact file. When used in single file mode each entry represents a single file/
+- __Value__: This takes a file reference a glob or an array of files/globs. This is where you select the source files. Paths starting in / are relative to the project directory and relative directories are relative to the config file.
 
 ### Concatenation
 
