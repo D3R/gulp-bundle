@@ -1,12 +1,12 @@
-# gulp-bundle
+# Gulp asset bundler
 
 Moves assets into the web directory based on a config file. This is so that by specifying a config in composer packages and locally in a folder we can move all relevant files needed for the site frontend into the relevant directories.
 
-## Config file:
+## Config file
 
 The main thing that you'll need to know about this plugin is how to create your config files.
 
-There should always be the 3 keys javascript, css, and assets. These have been kept separate in case of any future development and if they get handled differently in the future. For now however there is no difference between these keys.
+There should always be the 3 keys: javascript, css, and assets. These have been kept separate in case of any future development because they get handled differently in the future. For now however there is no difference between these keys.
 
 The rest of the set up involves a key pair set up.
 
@@ -14,7 +14,7 @@ The rest of the set up involves a key pair set up.
 
 This is the destination for the file or files. If this is a directory, files will be just copied into the directory. If you specify a file then files will be written to that exact file.
 
-:exclamation: __If your key is a file path and your value is a glob that finds multiple files it will just keep getting overwritten and you'll only have the last found file__
+:exclamation: __If your key is a file path and your value is a [glob](https://en.wikipedia.org/wiki/Glob_(programming)) that finds multiple files it will just keep getting overwritten and you'll only have the last found file__
 
 
 ### Value
