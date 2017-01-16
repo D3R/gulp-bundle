@@ -41,13 +41,13 @@ module.exports = function (params) {
             root: process.cwd(),
             cwd: getDirectory(currentFile)
         }, function(err, files) {
-            for (var i = 0; i < files.length; i++) {
+            files.forEach(function(input) {
                 var output = dest;
                 if (isDir) {
-                    output += '/' + getFile(files[i]);
+                    output += '/' + getFile(input);
                 }
 
-                var file = normalizePath(files[i]);
+                var file = normalizePath(input);
 
                 fs.readFile(file, function (err, data) {
                     if (err) {
@@ -61,7 +61,7 @@ module.exports = function (params) {
 
                     callback.call(null, vnl, pos);
                 });
-            }
+            });
         });
     }
 
