@@ -77,20 +77,22 @@ module.exports = function (params) {
 
     function copyFiles(target, dest, callback) {
         var isDir = isDirectory(dest);
-        if (Array.isArray(target) && !isDir) {
+        if (Array.isArray(target) && !isDir && target.length > 1) {
             var partial = {
                 count: target.length,
-                fragments: []
+                fragments: [],
+                length: 0
             };
 
             for (var i = 0; i < target.length; i++) {
                 copyFile(target[i], dest, function (vnl, pos) {
                     partial.fragments[pos] = vnl.contents;
+                    partial.length += vnl.contents.length;
 
                     if (partial.fragments.length == partial.count) {
                         var compiled = new Vinyl({
                             path: vnl.path,
-                            contents: Buffer.concat(partial.fragments)
+                            contents: Buffer.concat(partial.fragments, partial.length)
                         });
 
                         callback.call(null, compiled);
