@@ -10,6 +10,8 @@ module.exports = function (params) {
 
     var currentFile;
 
+    var promises = [];
+
     function isDirectory(file) {
         var filename = file.split('/').pop();
         return filename.search(/\./) === -1;
@@ -37,11 +39,17 @@ module.exports = function (params) {
 
     function copyFile(target, dest, callback, pos) {
         var isDir = isDirectory(dest);
-        glob.glob(target, {
+        var files = glob.sync(target, {
             root: process.cwd(),
             cwd: getDirectory(currentFile)
-        }, function(err, files) {
-            files.forEach(function(input) {
+        });
+
+        if (!files.length) {
+            throw new gutil.PluginError('gulp-d3r-bundle', 'No files found matching pattern: ' + target);
+        }
+
+        files.forEach(function(input) {
+            promises.push(new Promise((resolve, reject) => {
                 var output = dest;
                 if (isDir) {
                     output += '/' + getFile(input);
@@ -60,8 +68,10 @@ module.exports = function (params) {
                     });
 
                     callback.call(null, vnl, pos);
+
+                    resolve();
                 });
-            });
+            }));
         });
     }
 
@@ -134,7 +144,10 @@ module.exports = function (params) {
                 copyFiles(target, dest, returnFile);
             }
 
-            return;
         }
+
+        Promise.all(promises).then(values => {
+            return callback(null, null);
+        });
     });
 };
