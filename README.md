@@ -50,6 +50,7 @@ gulp.task('bundle', function() {
             'vendor/d3r/*/*.bundle.json'
         ])
         .pipe(bundle())
-        .pipe(notify("Bundle complete: <%=file.relative%>"))
+        .pipe(gulp.dest('web/'))
+        .pipe(notify("File move complete: <%=file.relative%>"))
 });
 ```
