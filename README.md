@@ -2,6 +2,14 @@
 
 Moves assets into the web directory based on a config file. This is so that by specifying a config in composer packages and locally in a folder we can move all relevant files needed for the site frontend into the relevant directories.
 
+## Installation
+
+Install using yarn
+
+```bash
+yarn add git+ssh://git@github.com/D3R/gulp-bundle.git#^0.2
+```
+
 ## Config file
 
 The main thing that you'll need to know about this plugin is how to create your config files.
