@@ -88,15 +88,17 @@ module.exports = function (params) {
                 copyFile(target[i], dest, function (vnl, pos) {
                     partial.fragments[pos] = vnl.contents;
                     partial.length += vnl.contents.length;
+                    
+                    setTimeout(function() {
+                        if (partial.fragments.length == partial.count) {
+                            var compiled = new Vinyl({
+                                path: vnl.path,
+                                contents: Buffer.concat(partial.fragments, partial.length)
+                            });
 
-                    if (partial.fragments.length == partial.count) {
-                        var compiled = new Vinyl({
-                            path: vnl.path,
-                            contents: Buffer.concat(partial.fragments, partial.length)
-                        });
-
-                        callback.call(null, compiled);
-                    }
+                            callback.call(null, compiled);
+                        }
+                    }, 10);
                 }, i);
             }
         } else {
