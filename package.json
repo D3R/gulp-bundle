@@ -1,6 +1,6 @@
 {
   "name": "gulp-d3r-bundle",
-  "version": "0.2.4",
+  "version": "0.2.6",
   "description": "Moves assets into the web directory based on a config file",
   "repository": "https://github.com/D3R/gulp-bundle.git",
   "bugs": "https://github.com/D3R/gulp-bundle/issues",
