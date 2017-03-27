@@ -57,6 +57,11 @@ module.exports = function (params) {
 
                 var file = normalizePath(input);
 
+                if (fs.lstatSync(file).isDirectory()) {
+                    resolve();
+                    return;
+                }
+
                 fs.readFile(file, function (err, data) {
                     if (err) {
                         throw new gutil.PluginError('gulp-d3r-bundle', 'Error reading file: ' + output);
@@ -88,7 +93,7 @@ module.exports = function (params) {
                 copyFile(target[i], dest, function (vnl, pos) {
                     partial.fragments[pos] = vnl.contents;
                     partial.length += vnl.contents.length;
-                    
+
                     setTimeout(function() {
                         if (partial.fragments.length == partial.count) {
                             var compiled = new Vinyl({
