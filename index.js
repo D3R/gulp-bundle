@@ -41,7 +41,8 @@ module.exports = function (params) {
         var isDir = isDirectory(dest);
         var files = glob.sync(target, {
             root: process.cwd(),
-            cwd: getDirectory(currentFile)
+            cwd: getDirectory(currentFile),
+            nodir: true
         });
 
         if (!files.length) {
@@ -51,16 +52,12 @@ module.exports = function (params) {
         files.forEach(function(input) {
             promises.push(new Promise((resolve, reject) => {
                 var output = dest;
-                if (isDir) {
-                    output += '/' + getFile(input);
-                }
+
+                // Calculate diretory offset
+                var noglob = target.replace(/\*\*\/\*.*/, '');
+                output += '/' + input.replace(process.cwd(), '').replace(noglob, '');
 
                 var file = normalizePath(input);
-
-                if (fs.lstatSync(file).isDirectory()) {
-                    resolve();
-                    return;
-                }
 
                 fs.readFile(file, function (err, data) {
                     if (err) {
