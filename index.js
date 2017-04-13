@@ -86,27 +86,30 @@ module.exports = function (params) {
                 length: 0
             };
 
+            var parts = [];
+
             for (var i = 0; i < target.length; i++) {
-                promises.push(new Promise((resolve, reject) => {
+                parts.push(new Promise((resolve, reject) => {
                     copyFile(target[i], dest, function (vnl, pos) {
                         partial.fragments[pos] = vnl.contents;
                         partial.length += vnl.contents.length;
 
-                        if (partial.fragments.length == partial.count) {
-                            setTimeout(function() {
-                                var compiled = new Vinyl({
-                                    path: vnl.path,
-                                    contents: Buffer.concat(partial.fragments, partial.length)
-                                });
-
-                                callback.call(null, compiled);
-
-                                resolve();
-                            }, 10);
-                        }
+                        resolve();
                     }, i);
                 }));
             }
+            promises.push(new Promise((resolve, reject) => {
+                Promise.all(parts).then(values => {
+                    var compiled = new Vinyl({
+                        path: dest,
+                        contents: Buffer.concat(partial.fragments, partial.length)
+                    });
+
+                    callback.call(null, compiled);
+
+                    resolve();
+                });
+            }));
         } else {
             copyFile(target, dest, callback);
         }
