@@ -87,21 +87,25 @@ module.exports = function (params) {
             };
 
             for (var i = 0; i < target.length; i++) {
-                copyFile(target[i], dest, function (vnl, pos) {
-                    partial.fragments[pos] = vnl.contents;
-                    partial.length += vnl.contents.length;
+                promises.push(new Promise((resolve, reject) => {
+                    copyFile(target[i], dest, function (vnl, pos) {
+                        partial.fragments[pos] = vnl.contents;
+                        partial.length += vnl.contents.length;
 
-                    setTimeout(function() {
                         if (partial.fragments.length == partial.count) {
-                            var compiled = new Vinyl({
-                                path: vnl.path,
-                                contents: Buffer.concat(partial.fragments, partial.length)
-                            });
+                            setTimeout(function() {
+                                var compiled = new Vinyl({
+                                    path: vnl.path,
+                                    contents: Buffer.concat(partial.fragments, partial.length)
+                                });
 
-                            callback.call(null, compiled);
+                                callback.call(null, compiled);
+
+                                resolve();
+                            }, 10);
                         }
-                    }, 10);
-                }, i);
+                    }, i);
+                }));
             }
         } else {
             copyFile(target, dest, callback);
