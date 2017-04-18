@@ -41,7 +41,8 @@ module.exports = function (params) {
         var isDir = isDirectory(dest);
         var files = glob.sync(target, {
             root: process.cwd(),
-            cwd: getDirectory(currentFile)
+            cwd: getDirectory(currentFile),
+            nodir: true
         });
 
         if (!files.length) {
@@ -51,16 +52,12 @@ module.exports = function (params) {
         files.forEach(function(input) {
             promises.push(new Promise((resolve, reject) => {
                 var output = dest;
-                if (isDir) {
-                    output += '/' + getFile(input);
-                }
+
+                // Calculate diretory offset
+                var noglob = target.replace(/\*\*\/\*.*/, '');
+                output += '/' + input.replace(process.cwd(), '').replace(noglob, '');
 
                 var file = normalizePath(input);
-
-                if (fs.lstatSync(file).isDirectory()) {
-                    resolve();
-                    return;
-                }
 
                 fs.readFile(file, function (err, data) {
                     if (err) {
@@ -89,23 +86,30 @@ module.exports = function (params) {
                 length: 0
             };
 
+            var parts = [];
+
             for (var i = 0; i < target.length; i++) {
-                copyFile(target[i], dest, function (vnl, pos) {
-                    partial.fragments[pos] = vnl.contents;
-                    partial.length += vnl.contents.length;
+                parts.push(new Promise((resolve, reject) => {
+                    copyFile(target[i], dest, function (vnl, pos) {
+                        partial.fragments[pos] = vnl.contents;
+                        partial.length += vnl.contents.length;
 
-                    setTimeout(function() {
-                        if (partial.fragments.length == partial.count) {
-                            var compiled = new Vinyl({
-                                path: vnl.path,
-                                contents: Buffer.concat(partial.fragments, partial.length)
-                            });
-
-                            callback.call(null, compiled);
-                        }
-                    }, 10);
-                }, i);
+                        resolve();
+                    }, i);
+                }));
             }
+            promises.push(new Promise((resolve, reject) => {
+                Promise.all(parts).then(values => {
+                    var compiled = new Vinyl({
+                        path: dest,
+                        contents: Buffer.concat(partial.fragments, partial.length)
+                    });
+
+                    callback.call(null, compiled);
+
+                    resolve();
+                });
+            }));
         } else {
             copyFile(target, dest, callback);
         }
