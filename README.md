@@ -7,7 +7,7 @@ Moves assets into the web directory based on a config file. This is so that by s
 Install using yarn
 
 ```bash
-yarn add git+ssh://git@github.com/D3R/gulp-bundle.git#^0.3
+yarn add git+ssh://git@github.com/D3R/gulp-bundle.git#^0.3 --dev
 ```
 
 ## Config file
