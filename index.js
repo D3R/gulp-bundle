@@ -2,7 +2,7 @@ var glob = require("glob");
 var fs = require('fs');
 var path = require('path');
 var through = require('through2');
-var gutil = require('gulp-util');
+var PluginError = require('plugin-error');
 var Vinyl = require('vinyl');
 
 module.exports = function (params) {
@@ -46,7 +46,7 @@ module.exports = function (params) {
         });
 
         if (!files.length) {
-            throw new gutil.PluginError('gulp-d3r-bundle', 'No files found matching pattern: ' + target);
+            throw new PluginError('gulp-d3r-bundle', 'No files found matching pattern: ' + target);
         }
 
         files.forEach(function(input) {
@@ -61,7 +61,7 @@ module.exports = function (params) {
 
                 fs.readFile(file, function (err, data) {
                     if (err) {
-                        throw new gutil.PluginError('gulp-d3r-bundle', 'Error reading file: ' + output);
+                        throw new PluginError('gulp-d3r-bundle', 'Error reading file: ' + output);
                     }
 
                     var vnl = new Vinyl({
@@ -124,7 +124,7 @@ module.exports = function (params) {
         }
 
         if (file.isStream()) {
-            throw new gutil.PluginError('gulp-d3r-bundle', 'stream not supported');
+            throw new PluginError('gulp-d3r-bundle', 'stream not supported');
         }
 
         if (file.isBuffer()) {
@@ -139,7 +139,7 @@ module.exports = function (params) {
             try {
                 result = JSON.parse(String(file.contents));
             } catch (err) {
-                throw new gutil.PluginError('gulp-d3r-bundle', 'Invalid JSON: ' + file.path);
+                throw new PluginError('gulp-d3r-bundle', 'Invalid JSON: ' + file.path);
             }
 
             for (dest in result.javascript) {
@@ -159,7 +159,7 @@ module.exports = function (params) {
 
         }
 
-        Promise.all(promises).then(values => {
+        return Promise.all(promises).then(values => {
             return callback(null, null);
         });
     });
