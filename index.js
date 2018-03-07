@@ -2,7 +2,7 @@ var glob = require("glob");
 var fs = require('fs');
 var path = require('path');
 var through = require('through2');
-var gutil = require('gulp-util');
+var PluginError = require('plugin-error');
 var Vinyl = require('vinyl');
 
 module.exports = function (params) {
@@ -45,7 +45,7 @@ module.exports = function (params) {
         });
 
         if (!files.length) {
-            throw new gutil.PluginError('gulp-d3r-bundle', 'No files found matching pattern: ' + target);
+            throw new PluginError('gulp-d3r-bundle', 'No files found matching pattern: ' + target);
         }
 
         files.forEach(function(input) {
@@ -64,12 +64,12 @@ module.exports = function (params) {
 
                 fs.readFile(file, function (err, data) {
                     if (err) {
-                        throw new gutil.PluginError('gulp-d3r-bundle', 'Error reading file: ' + output);
+                        throw new PluginError('gulp-d3r-bundle', 'Error reading file: ' + output);
                     }
 
                     var vnl = new Vinyl({
                         path: output,
-                        contents: data
+                        contents: Buffer.from(data)
                     });
 
                     callback.call(null, vnl, pos);
@@ -86,24 +86,24 @@ module.exports = function (params) {
             var partial = {
                 count: target.length,
                 fragments: [],
-                length: 0
+                length: 0,
+                progress: 0
             };
 
             for (var i = 0; i < target.length; i++) {
                 copyFile(target[i], dest, function (vnl, pos) {
                     partial.fragments[pos] = vnl.contents;
                     partial.length += vnl.contents.length;
+                    partial.progress++;
 
-                    setTimeout(function() {
-                        if (partial.fragments.length == partial.count) {
-                            var compiled = new Vinyl({
-                                path: vnl.path,
-                                contents: Buffer.concat(partial.fragments, partial.length)
-                            });
+                    if (partial.progress == partial.count) {
+                        var compiled = new Vinyl({
+                            path: vnl.path,
+                            contents: Buffer.concat(partial.fragments, partial.length)
+                        });
 
-                            callback.call(null, compiled);
-                        }
-                    }, 10);
+                        callback.call(null, compiled);
+                    }
                 }, i);
             }
         } else {
@@ -120,7 +120,7 @@ module.exports = function (params) {
         }
 
         if (file.isStream()) {
-            throw new gutil.PluginError('gulp-d3r-bundle', 'stream not supported');
+            throw new PluginError('gulp-d3r-bundle', 'stream not supported');
         }
 
         if (file.isBuffer()) {
@@ -135,7 +135,7 @@ module.exports = function (params) {
             try {
                 result = JSON.parse(String(file.contents));
             } catch (err) {
-                throw new gutil.PluginError('gulp-d3r-bundle', 'Invalid JSON: ' + file.path);
+                throw new PluginError('gulp-d3r-bundle', 'Invalid JSON: ' + file.path);
             }
 
             for (dest in result.javascript) {
