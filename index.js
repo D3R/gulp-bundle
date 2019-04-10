@@ -93,7 +93,6 @@ module.exports = function (params) {
                     copyFile(target[i], dest, function (vnl, pos) {
                         partial.fragments[pos] = vnl.contents;
                         partial.length += vnl.contents.length;
-
                         resolve();
                     }, i);
                 }));
@@ -108,6 +107,8 @@ module.exports = function (params) {
                     callback.call(null, compiled);
 
                     resolve();
+                }).catch(function(error) {
+                    reject(error);
                 });
             }));
         } else {
@@ -158,9 +159,12 @@ module.exports = function (params) {
             }
 
         }
-
         return Promise.all(promises).then(values => {
             return callback(null, null);
-        });
+        }).catch(function(error) {
+            // prevent stream unhandled exception from being suppressed by Promise
+           callback(new PluginError('gulp-d3r-bundle', error));
+        })
     });
+
 };
